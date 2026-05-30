@@ -3,36 +3,70 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Classified dossier for Subject 001 - Silas Vance, codename APEX" />
   <title>APEX — Silas Vance // CLASSIFIED</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Chakra+Petch:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
   <style>
+    /* ═══════════════════════════════════════════════════════════
+       CSS VARIABLES
+       ═══════════════════════════════════════════════════════════ */
     :root {
-      --energy:   #ff9100;
+      /* Colors */
+      --energy: #ff9100;
       --energy-lo: rgba(255, 145, 0, 0.18);
-      --energy-glow: 0 0 12px #ff9100, 0 0 32px rgba(255,145,0,0.4);
       --neon-blue: #00b4ff;
       --neon-blue-lo: rgba(0, 180, 255, 0.15);
-      --bg:       #040810;
-      --surface:  #080e18;
+      --bg: #040810;
+      --surface: #080e18;
       --surface2: #0d1525;
-      --text:     #b8cce0;
+      --text: #b8cce0;
       --text-dim: #5a7a96;
       --red-warn: #ff3b3b;
+
+      /* Effects */
+      --energy-glow: 0 0 12px #ff9100, 0 0 32px rgba(255, 145, 0, 0.4);
+
+      /* Typography */
+      --font-display: 'Orbitron', monospace;
+      --font-body: 'Chakra Petch', monospace;
+
+      /* Spacing */
+      --spacing-section: 5rem;
+      --spacing-gutter: 6vw;
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* ═══════════════════════════════════════════════════════════
+       RESET & BASE
+       ═══════════════════════════════════════════════════════════ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Chakra Petch', monospace;
+      font-family: var(--font-body);
       overflow-x: hidden;
       cursor: crosshair;
+      line-height: 1.6;
     }
 
-    /* ── RAIN CANVAS ── */
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       EFFECTS OVERLAYS
+       ═══════════════════════════════════════════════════════════ */
     #rain {
       position: fixed;
       inset: 0;
@@ -41,7 +75,6 @@
       opacity: 0.35;
     }
 
-    /* ── SCANLINES OVERLAY ── */
     body::after {
       content: '';
       position: fixed;
@@ -50,21 +83,23 @@
         to bottom,
         transparent,
         transparent 2px,
-        rgba(0,0,0,0.08) 2px,
-        rgba(0,0,0,0.08) 4px
+        rgba(0, 0, 0, 0.08) 2px,
+        rgba(0, 0, 0, 0.08) 4px
       );
       pointer-events: none;
       z-index: 9999;
     }
 
-    /* ── HERO ── */
+    /* ═══════════════════════════════════════════════════════════
+       HERO SECTION
+       ═══════════════════════════════════════════════════════════ */
     .hero {
       position: relative;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      padding: 0 0 4rem;
+      padding-bottom: 4rem;
       overflow: hidden;
       z-index: 1;
     }
@@ -83,19 +118,18 @@
 
     @keyframes heroZoom {
       from { transform: scale(1.04); }
-      to   { transform: scale(1.10); }
+      to { transform: scale(1.10); }
     }
 
     .hero-overlay {
       position: absolute;
       inset: 0;
-      background: 
-        linear-gradient(to top, var(--bg) 0%, rgba(4,8,16,0.6) 40%, transparent 70%),
-        linear-gradient(to right, rgba(4,8,16,0.8) 0%, transparent 60%);
+      background:
+        linear-gradient(to top, var(--bg) 0%, rgba(4, 8, 16, 0.6) 40%, transparent 70%),
+        linear-gradient(to right, rgba(4, 8, 16, 0.8) 0%, transparent 60%);
       z-index: 1;
     }
 
-    /* Energy bleed lines from bottom */
     .hero-energy {
       position: absolute;
       bottom: 0;
@@ -110,16 +144,17 @@
 
     @keyframes energyPulse {
       0%, 100% { opacity: 0.6; }
-      50%       { opacity: 1; }
+      50% { opacity: 1; }
     }
 
     .hero-content {
       position: relative;
       z-index: 3;
-      padding: 0 6vw;
+      padding: 0 var(--spacing-gutter);
       max-width: 900px;
     }
 
+    /* Classification Badge */
     .classification-badge {
       display: inline-flex;
       align-items: center;
@@ -143,26 +178,33 @@
       95% { opacity: 0; }
     }
 
+    /* Hero Typography */
     .hero-alias {
-      font-family: 'Orbitron', monospace;
+      font-family: var(--font-display);
       font-size: clamp(4rem, 12vw, 9rem);
       font-weight: 900;
       line-height: 0.9;
       letter-spacing: -0.02em;
       color: #fff;
-      text-shadow: 
-        0 0 40px rgba(255,145,0,0.5),
-        0 0 100px rgba(255,145,0,0.2);
+      text-shadow:
+        0 0 40px rgba(255, 145, 0, 0.5),
+        0 0 100px rgba(255, 145, 0, 0.2);
       animation: titleReveal 1s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
     @keyframes titleReveal {
-      from { opacity: 0; transform: translateY(30px) skewX(-3deg); }
-      to   { opacity: 1; transform: translateY(0) skewX(0); }
+      from {
+        opacity: 0;
+        transform: translateY(30px) skewX(-3deg);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) skewX(0);
+      }
     }
 
     .hero-name {
-      font-family: 'Chakra Petch', monospace;
+      font-family: var(--font-body);
       font-size: clamp(0.8rem, 2vw, 1rem);
       font-weight: 300;
       letter-spacing: 0.4em;
@@ -175,11 +217,13 @@
       color: var(--neon-blue);
     }
 
-    /* ── SECTION WRAPPER ── */
+    /* ═══════════════════════════════════════════════════════════
+       SECTIONS
+       ═══════════════════════════════════════════════════════════ */
     .section {
       position: relative;
       z-index: 1;
-      padding: 5rem 6vw;
+      padding: var(--spacing-section) var(--spacing-gutter);
       max-width: 1200px;
       margin: 0 auto;
     }
@@ -203,7 +247,9 @@
       max-width: 200px;
     }
 
-    /* ── DOSSIER GRID ── */
+    /* ═══════════════════════════════════════════════════════════
+       DOSSIER GRID
+       ═══════════════════════════════════════════════════════════ */
     .dossier {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -212,10 +258,12 @@
     }
 
     @media (max-width: 768px) {
-      .dossier { grid-template-columns: 1fr; }
+      .dossier {
+        grid-template-columns: 1fr;
+      }
     }
 
-    /* ── SUBJECT CARD ── */
+    /* Subject Card */
     .subject-card {
       position: relative;
       aspect-ratio: 4/5;
@@ -237,7 +285,6 @@
       transform: scale(1.03);
     }
 
-    /* energy border frame */
     .subject-card::before,
     .subject-card::after {
       content: '';
@@ -245,22 +292,28 @@
       pointer-events: none;
       z-index: 2;
     }
+
     .subject-card::before {
       inset: 0;
-      border: 1px solid rgba(255,145,0,0.25);
+      border: 1px solid rgba(255, 145, 0, 0.25);
     }
+
     .subject-card::after {
-      top: 0; left: 0;
-      width: 40%; height: 3px;
+      top: 0;
+      left: 0;
+      width: 40%;
+      height: 3px;
       background: var(--energy);
       box-shadow: var(--energy-glow);
     }
 
     .subject-overlay {
       position: absolute;
-      bottom: 0; left: 0; right: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
       padding: 2rem 1.5rem 1.5rem;
-      background: linear-gradient(to top, rgba(4,8,16,0.95) 0%, transparent 100%);
+      background: linear-gradient(to top, rgba(4, 8, 16, 0.95) 0%, transparent 100%);
       z-index: 3;
     }
 
@@ -280,17 +333,17 @@
       padding-left: 0.5rem;
     }
 
-    /* ── INFO PANEL ── */
+    /* Info Panel */
     .info-panel {
       background: var(--surface);
       padding: 2.5rem;
       display: flex;
       flex-direction: column;
       gap: 2rem;
-      border-left: 1px solid rgba(255,145,0,0.1);
+      border-left: 1px solid rgba(255, 145, 0, 0.1);
     }
 
-    /* ── ORIGIN BLOCK ── */
+    /* Block Label */
     .block-label {
       font-size: 0.6rem;
       letter-spacing: 0.3em;
@@ -320,7 +373,7 @@
       padding-left: 1rem;
     }
 
-    /* ── ABILITIES ── */
+    /* Abilities */
     .abilities-list {
       display: flex;
       flex-direction: column;
@@ -339,19 +392,21 @@
     .ability-card::before {
       content: '';
       position: absolute;
-      left: 0; top: 0; bottom: 0;
+      left: 0;
+      top: 0;
+      bottom: 0;
       width: 2px;
       background: var(--energy);
       box-shadow: var(--energy-glow);
     }
 
     .ability-card:hover {
-      border-color: rgba(255,145,0,0.5);
-      box-shadow: inset 0 0 30px rgba(255,145,0,0.04);
+      border-color: rgba(255, 145, 0, 0.5);
+      box-shadow: inset 0 0 30px rgba(255, 145, 0, 0.04);
     }
 
     .ability-name {
-      font-family: 'Orbitron', monospace;
+      font-family: var(--font-display);
       font-size: 0.7rem;
       font-weight: 700;
       letter-spacing: 0.15em;
@@ -366,10 +421,10 @@
       font-weight: 300;
     }
 
-    /* ── WEAKNESS ── */
+    /* Weakness */
     .weakness-card {
       background: rgba(255, 59, 59, 0.04);
-      border: 1px solid rgba(255,59,59,0.2);
+      border: 1px solid rgba(255, 59, 59, 0.2);
       padding: 1rem 1.2rem;
       position: relative;
     }
@@ -377,7 +432,9 @@
     .weakness-card::before {
       content: '';
       position: absolute;
-      left: 0; top: 0; bottom: 0;
+      left: 0;
+      top: 0;
+      bottom: 0;
       width: 2px;
       background: var(--red-warn);
       box-shadow: 0 0 8px var(--red-warn);
@@ -400,13 +457,15 @@
     .weakness-text {
       font-size: 0.8rem;
       line-height: 1.6;
-      color: rgba(255,59,59,0.7);
+      color: rgba(255, 59, 59, 0.7);
       font-weight: 300;
     }
 
-    /* ── GALLERY ── */
+    /* ═══════════════════════════════════════════════════════════
+       GALLERY
+       ═══════════════════════════════════════════════════════════ */
     .gallery-section {
-      border-top: 1px solid rgba(255,145,0,0.1);
+      border-top: 1px solid rgba(255, 145, 0, 0.1);
       padding-top: 4rem;
     }
 
@@ -418,7 +477,7 @@
     }
 
     .gallery-title {
-      font-family: 'Orbitron', monospace;
+      font-family: var(--font-display);
       font-size: 1.2rem;
       font-weight: 700;
       letter-spacing: 0.1em;
@@ -468,16 +527,17 @@
     }
 
     .gallery-item:hover::after {
-      border-color: rgba(255,145,0,0.4);
-      box-shadow: inset 0 0 30px rgba(255,145,0,0.08);
+      border-color: rgba(255, 145, 0, 0.4);
+      box-shadow: inset 0 0 30px rgba(255, 145, 0, 0.08);
     }
 
-    /* corner accents on hover */
     .gallery-item::before {
       content: '';
       position: absolute;
-      top: 0; left: 0;
-      width: 0; height: 2px;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
       background: var(--energy);
       box-shadow: var(--energy-glow);
       transition: width 0.4s ease;
@@ -488,77 +548,7 @@
       width: 40%;
     }
 
-    /* ── LIGHTBOX ── */
-    .lightbox {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(4,8,16,0.97);
-      z-index: 10000;
-      align-items: center;
-      justify-content: center;
-      cursor: crosshair;
-    }
-
-    .lightbox.open {
-      display: flex;
-    }
-
-    .lightbox img {
-      max-width: 90vw;
-      max-height: 90vh;
-      object-fit: contain;
-      border: 1px solid rgba(255,145,0,0.3);
-      box-shadow: 0 0 60px rgba(255,145,0,0.15);
-      animation: lightboxIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-
-    @keyframes lightboxIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-
-    .lightbox-close {
-      position: absolute;
-      top: 1.5rem;
-      right: 2rem;
-      font-family: 'Orbitron', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      color: var(--text-dim);
-      cursor: crosshair;
-      transition: color 0.2s;
-    }
-
-    .lightbox-close:hover {
-      color: var(--energy);
-    }
-
-    /* ── FOOTER ── */
-    .footer {
-      position: relative;
-      z-index: 1;
-      padding: 2rem 6vw;
-      border-top: 1px solid rgba(255,145,0,0.08);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .footer-text {
-      font-size: 0.6rem;
-      letter-spacing: 0.25em;
-      color: var(--text-dim);
-    }
-
-    .footer-energy {
-      width: 60px;
-      height: 1px;
-      background: linear-gradient(to right, transparent, var(--energy));
-      box-shadow: var(--energy-glow);
-    }
-
-    /* ── LOADING STATE ── */
+    /* Loading State */
     .gallery-loading {
       grid-column: 1 / -1;
       text-align: center;
@@ -584,223 +574,404 @@
       0%, 100% { opacity: 0.2; transform: scale(0.8); }
       50% { opacity: 1; transform: scale(1.2); }
     }
+
+    /* ═══════════════════════════════════════════════════════════
+       LIGHTBOX
+       ═══════════════════════════════════════════════════════════ */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 8, 16, 0.97);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      cursor: crosshair;
+    }
+
+    .lightbox.open {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border: 1px solid rgba(255, 145, 0, 0.3);
+      box-shadow: 0 0 60px rgba(255, 145, 0, 0.15);
+      animation: lightboxIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes lightboxIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
+      cursor: crosshair;
+      transition: color 0.2s;
+    }
+
+    .lightbox-close:hover {
+      color: var(--energy);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════════════════════════ */
+    .footer {
+      position: relative;
+      z-index: 1;
+      padding: 2rem var(--spacing-gutter);
+      border-top: 1px solid rgba(255, 145, 0, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-text {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      color: var(--text-dim);
+    }
+
+    .footer-energy {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--energy));
+      box-shadow: var(--energy-glow);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       ACCESSIBILITY
+       ═══════════════════════════════════════════════════════════ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
   </style>
 </head>
 <body>
+  <!-- Rain Effect Canvas -->
+  <canvas id="rain" aria-hidden="true"></canvas>
 
-  <!-- Rain canvas -->
-  <canvas id="rain"></canvas>
-
-  <!-- ── HERO ── -->
-  <section class="hero">
-    <div class="hero-bg"></div>
-    <div class="hero-overlay"></div>
-    <div class="hero-energy"></div>
+  <!-- ═══════════════════════════════════════════════════════════
+       HERO SECTION
+       ═══════════════════════════════════════════════════════════ -->
+  <header class="hero" role="banner">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <div class="hero-energy" aria-hidden="true"></div>
 
     <div class="hero-content">
-      <div class="classification-badge">CLASSIFIED // THREAT LEVEL: APEX</div>
+      <div class="classification-badge" role="status">
+        CLASSIFIED // THREAT LEVEL: APEX
+      </div>
       <h1 class="hero-alias">APEX</h1>
-      <p class="hero-name">SILAS VANCE &nbsp;//&nbsp; <span>SUBJECT 001</span> &nbsp;//&nbsp; ACTIVE</p>
+      <p class="hero-name">
+        SILAS VANCE &nbsp;//&nbsp;
+        <span>SUBJECT 001</span> &nbsp;//&nbsp; ACTIVE
+      </p>
     </div>
-  </section>
+  </header>
 
-  <!-- ── DOSSIER ── -->
-  <div class="section">
+  <!-- ═══════════════════════════════════════════════════════════
+       MAIN CONTENT
+       ═══════════════════════════════════════════════════════════ -->
+  <main class="section" role="main">
     <p class="section-label">SUBJECT DOSSIER</p>
 
     <div class="dossier">
-
-      <!-- Image panel -->
-      <div class="subject-card">
-        <img src="assets/silas-02.jpg" alt="Apex — Silas Vance" />
-        <div class="subject-overlay">
+      <!-- Image Panel -->
+      <figure class="subject-card">
+        <img src="assets/silas-02.jpg" alt="Portrait of Silas Vance, Subject 001" />
+        <figcaption class="subject-overlay">
           <div class="subject-id">ID // SV-001-KDA &nbsp;&nbsp; RECORDED: CLASSIFIED</div>
           <div class="subject-status">KINETIC ADAPTATION ACTIVE</div>
-        </div>
-      </div>
+        </figcaption>
+      </figure>
 
-      <!-- Info panel -->
+      <!-- Info Panel -->
       <div class="info-panel">
-
-        <div>
-          <div class="block-label">INCIDENT ORIGIN</div>
+        <section aria-labelledby="origin-label">
+          <div class="block-label" id="origin-label">INCIDENT ORIGIN</div>
           <p class="origin-text">
             A catastrophic failure in a resonance chamber fused experimental
             kinetic-dampening metamaterials into his cellular structure, triggering
             hyper-accelerated cellular evolution.
           </p>
-        </div>
+        </section>
 
-        <div>
-          <div class="block-label">REGISTERED CAPABILITIES</div>
+        <section aria-labelledby="abilities-label">
+          <div class="block-label" id="abilities-label">REGISTERED CAPABILITIES</div>
           <div class="abilities-list">
-
-            <div class="ability-card">
+            <article class="ability-card">
               <div class="ability-name">▸ Kinetic Absorption</div>
               <div class="ability-desc">
                 Absorbs kinetic energy from physical impacts, ballistics, and explosions.
                 Stored energy is redirected as targeted concussive shockwaves.
               </div>
-            </div>
+            </article>
 
-            <div class="ability-card">
+            <article class="ability-card">
               <div class="ability-name">▸ Biological Adaptation</div>
               <div class="ability-desc">
                 Cells autonomously rewrite DNA in real-time to counter environmental threats.
                 Grants instantaneous temporary mutations — thermal resistance, toxin immunity,
                 rapid tissue regeneration.
               </div>
-            </div>
-
+            </article>
           </div>
-        </div>
+        </section>
 
-        <div>
+        <section aria-labelledby="weakness-label">
           <div class="weakness-card">
-            <div class="weakness-label">CRITICAL VULNERABILITY</div>
+            <div class="weakness-label" id="weakness-label">CRITICAL VULNERABILITY</div>
             <div class="weakness-text">
               Cellular structure becomes highly unstable if completely deprived of kinetic
               input or isolated in sensory-deprivation environments.
             </div>
           </div>
-        </div>
-
+        </section>
       </div>
     </div>
 
-    <!-- ── GALLERY ── -->
-    <div class="gallery-section" style="margin-top: 5rem;">
+    <!-- Gallery Section -->
+    <section class="gallery-section" aria-labelledby="gallery-label">
       <div class="gallery-header">
-        <div class="gallery-title">FIELD FOOTAGE</div>
-        <div class="gallery-count" id="gallery-count">LOADING ASSETS</div>
+        <h2 class="gallery-title" id="gallery-label">FIELD FOOTAGE</h2>
+        <div class="gallery-count" id="gallery-count" aria-live="polite">LOADING ASSETS</div>
       </div>
-      <div class="gallery-grid" id="gallery-grid">
+      <div class="gallery-grid" id="gallery-grid" role="list">
         <div class="gallery-loading">RETRIEVING ENCRYPTED FILES</div>
       </div>
+    </section>
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════════════════════════ -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-text">
+      APEX DOSSIER // EYES ONLY // UNAUTHORIZED ACCESS IS A FEDERAL OFFENSE
     </div>
-
-  </div>
-
-  <!-- ── FOOTER ── */
-  <footer class="footer">
-    <div class="footer-text">APEX DOSSIER // EYES ONLY // UNAUTHORIZED ACCESS IS A FEDERAL OFFENSE</div>
-    <div class="footer-energy"></div>
+    <div class="footer-energy" aria-hidden="true"></div>
   </footer>
 
-  <!-- ── LIGHTBOX ── -->
-  <div class="lightbox" id="lightbox">
-    <span class="lightbox-close" id="lightbox-close">[ CLOSE ]</span>
+  <!-- ═══════════════════════════════════════════════════════════
+       LIGHTBOX MODAL
+       ═══════════════════════════════════════════════════════════ -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Close image viewer">
+      [ CLOSE ]
+    </button>
     <img id="lightbox-img" src="" alt="" />
   </div>
 
+  <!-- ═══════════════════════════════════════════════════════════
+       JAVASCRIPT
+       ═══════════════════════════════════════════════════════════ -->
   <script>
-    /* ── RAIN ── */
+    /**
+     * APEX Dossier - Interactive Effects
+     * Modular implementation for maintainability
+     */
+
     (function() {
-      const canvas = document.getElementById('rain');
-      const ctx = canvas.getContext('2d');
+      'use strict';
 
-      let drops = [];
-      const COUNT = 180;
+      // ═════════════════════════════════════════════════════════
+      // RAIN EFFECT MODULE
+      // ═════════════════════════════════════════════════════════
+      const RainEffect = {
+        canvas: null,
+        ctx: null,
+        drops: [],
+        count: 180,
 
-      function resize() {
-        canvas.width  = window.innerWidth;
-        canvas.height = window.innerHeight;
-      }
+        init() {
+          this.canvas = document.getElementById('rain');
+          if (!this.canvas) return;
 
-      function init() {
-        drops = [];
-        for (let i = 0; i < COUNT; i++) {
-          drops.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            len: Math.random() * 18 + 8,
-            speed: Math.random() * 6 + 8,
-            opacity: Math.random() * 0.5 + 0.1,
-            width: Math.random() * 0.8 + 0.2
+          this.ctx = this.canvas.getContext('2d');
+          this.resize();
+          this.createDrops();
+          this.draw();
+
+          window.addEventListener('resize', () => {
+            this.resize();
+            this.createDrops();
+          });
+        },
+
+        resize() {
+          this.canvas.width = window.innerWidth;
+          this.canvas.height = window.innerHeight;
+        },
+
+        createDrops() {
+          this.drops = [];
+          for (let i = 0; i < this.count; i++) {
+            this.drops.push({
+              x: Math.random() * this.canvas.width,
+              y: Math.random() * this.canvas.height,
+              len: Math.random() * 18 + 8,
+              speed: Math.random() * 6 + 8,
+              opacity: Math.random() * 0.5 + 0.1,
+              width: Math.random() * 0.8 + 0.2
+            });
+          }
+        },
+
+        draw() {
+          const { ctx, canvas, drops } = this;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          drops.forEach(drop => {
+            ctx.beginPath();
+            ctx.moveTo(drop.x, drop.y);
+            ctx.lineTo(drop.x - drop.len * 0.15, drop.y + drop.len);
+            ctx.strokeStyle = `rgba(140, 190, 230, ${drop.opacity})`;
+            ctx.lineWidth = drop.width;
+            ctx.stroke();
+
+            drop.y += drop.speed;
+            drop.x -= drop.speed * 0.15;
+
+            if (drop.y > canvas.height) {
+              drop.y = -drop.len;
+              drop.x = Math.random() * canvas.width;
+            }
+          });
+
+          requestAnimationFrame(() => this.draw());
+        }
+      };
+
+      // ═════════════════════════════════════════════════════════
+      // GALLERY MODULE
+      // ═════════════════════════════════════════════════════════
+      const Gallery = {
+        grid: null,
+        countEl: null,
+        fallbackImages: ['silas.jpg', 'silas-02.jpg', 'silas-03.jpg'],
+
+        async init() {
+          this.grid = document.getElementById('gallery-grid');
+          this.countEl = document.getElementById('gallery-count');
+
+          if (!this.grid || !this.countEl) return;
+
+          const images = await this.loadImages();
+          this.render(images);
+        },
+
+        async loadImages() {
+          try {
+            const res = await fetch(`assets/gallery.json?v=${Date.now()}`);
+            if (!res.ok) throw new Error('Manifest not found');
+            const data = await res.json();
+            return data.images || this.fallbackImages;
+          } catch (error) {
+            console.warn('Using fallback image list:', error.message);
+            return this.fallbackImages;
+          }
+        },
+
+        render(images) {
+          this.countEl.textContent = `${images.length} ASSET${images.length !== 1 ? 'S' : ''} RETRIEVED`;
+          this.grid.innerHTML = '';
+
+          images.forEach((filename, index) => {
+            const item = document.createElement('div');
+            item.className = 'gallery-item';
+            item.setAttribute('role', 'listitem');
+
+            const img = document.createElement('img');
+            img.src = `assets/${filename}`;
+            img.alt = `Apex — Field Image ${index + 1}`;
+            img.loading = 'lazy';
+
+            item.appendChild(img);
+            this.grid.appendChild(item);
+
+            item.addEventListener('click', () => Lightbox.open(`assets/${filename}`));
           });
         }
+      };
+
+      // ═════════════════════════════════════════════════════════
+      // LIGHTBOX MODULE
+      // ═════════════════════════════════════════════════════════
+      const Lightbox = {
+        element: null,
+        img: null,
+        closeBtn: null,
+
+        init() {
+          this.element = document.getElementById('lightbox');
+          this.img = document.getElementById('lightbox-img');
+          this.closeBtn = document.getElementById('lightbox-close');
+
+          if (!this.element || !this.img || !this.closeBtn) return;
+
+          this.closeBtn.addEventListener('click', () => this.close());
+          this.element.addEventListener('click', (e) => {
+            if (e.target === this.element) this.close();
+          });
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') this.close();
+          });
+        },
+
+        open(src) {
+          if (!this.img) return;
+          this.img.src = src;
+          this.img.alt = 'Enlarged view';
+          this.element.classList.add('open');
+          this.element.focus();
+        },
+
+        close() {
+          if (!this.img) return;
+          this.element.classList.remove('open');
+          this.img.src = '';
+          this.img.alt = '';
+          this.closeBtn.focus();
+        }
+      };
+
+      // ═════════════════════════════════════════════════════════
+      // INITIALIZATION
+      // ═════════════════════════════════════════════════════════
+      function init() {
+        RainEffect.init();
+        Gallery.init();
+        Lightbox.init();
       }
 
-      function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drops.forEach(d => {
-          ctx.beginPath();
-          ctx.moveTo(d.x, d.y);
-          ctx.lineTo(d.x - d.len * 0.15, d.y + d.len);
-          ctx.strokeStyle = `rgba(140,190,230,${d.opacity})`;
-          ctx.lineWidth = d.width;
-          ctx.stroke();
-
-          d.y += d.speed;
-          d.x -= d.speed * 0.15;
-
-          if (d.y > canvas.height) {
-            d.y = -d.len;
-            d.x = Math.random() * canvas.width;
-          }
-        });
-        requestAnimationFrame(draw);
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
       }
-
-      window.addEventListener('resize', () => { resize(); init(); });
-      resize(); init(); draw();
     })();
-
-    /* ── GALLERY ── */
-    (async function() {
-      const grid  = document.getElementById('gallery-grid');
-      const count = document.getElementById('gallery-count');
-
-      let images = [];
-
-      try {
-        const res = await fetch(`assets/gallery.json?v=${Date.now()}`);
-        if (!res.ok) throw new Error('not found');
-        const data = await res.json();
-        images = data.images || [];
-      } catch (_) {
-        // fallback: known filenames if manifest missing
-        images = ['silas.jpg', 'silas-02.jpg'];
-      }
-
-      count.textContent = `${images.length} ASSET${images.length !== 1 ? 'S' : ''} RETRIEVED`;
-      grid.innerHTML = '';
-
-      images.forEach((filename, i) => {
-        const item = document.createElement('div');
-        item.className = 'gallery-item';
-
-        const img = document.createElement('img');
-        img.src  = `assets/${filename}`;
-        img.alt  = `Apex — Field Image ${i + 1}`;
-        img.loading = 'lazy';
-
-        item.appendChild(img);
-        grid.appendChild(item);
-
-        item.addEventListener('click', () => openLightbox(`assets/${filename}`));
-      });
-    })();
-
-    /* ── LIGHTBOX ── */
-    const lightbox     = document.getElementById('lightbox');
-    const lightboxImg  = document.getElementById('lightbox-img');
-    const lightboxClose = document.getElementById('lightbox-close');
-
-    function openLightbox(src) {
-      lightboxImg.src = src;
-      lightbox.classList.add('open');
-    }
-
-    function closeLightbox() {
-      lightbox.classList.remove('open');
-      lightboxImg.src = '';
-    }
-
-    lightboxClose.addEventListener('click', closeLightbox);
-    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
   </script>
-
 </body>
 </html>
