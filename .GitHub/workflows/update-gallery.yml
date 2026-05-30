@@ -7,6 +7,9 @@ on:
     branches:
       - main
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   update-manifest:
     runs-on: ubuntu-latest
@@ -17,25 +20,26 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Generate gallery.json
+      - name: Generate gallery.json via Python
         run: |
-          cd assets
-          echo '{"images":[' > gallery.json
-          first=true
-          for f in $(ls *.jpg *.jpeg *.png *.webp 2>/dev/null | sort); do
-            if [ "$first" = true ]; then
-              first=false
-            else
-              echo ',' >> gallery.json
-            fi
-            echo -n "\"$f\"" >> gallery.json
-          done
-          echo ']}' >> gallery.json
+          python3 - <<'PYEOF'
+          import os, json
+
+          exts = {'.jpg', '.jpeg', '.png', '.webp', '.JPG', '.JPEG', '.PNG', '.WEBP'}
+          images = sorted([
+              f for f in os.listdir('assets')
+              if os.path.splitext(f)[1] in exts
+          ])
+
+          with open('assets/gallery.json', 'w') as fp:
+              json.dump({"images": images}, fp, indent=2)
+
+          print(f"Manifest written: {images}")
+          PYEOF
 
       - name: Commit manifest if changed
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add assets/gallery.json
-          git diff --staged --quiet || git commit -m "chore: update gallery manifest [skip ci]"
-          git push
+          git diff --staged --quiet && echo "No changes." || (git commit -m "chore: update gallery manifest [skip ci]" && git push)
