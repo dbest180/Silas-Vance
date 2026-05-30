@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APEX — Silas Vance // CLASSIFIED</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Chakra+Petch:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --energy:   #ff9100;
+      --energy-lo: rgba(255, 145, 0, 0.18);
+      --energy-glow: 0 0 12px #ff9100, 0 0 32px rgba(255,145,0,0.4);
+      --neon-blue: #00b4ff;
+      --neon-blue-lo: rgba(0, 180, 255, 0.15);
+      --bg:       #040810;
+      --surface:  #080e18;
+      --surface2: #0d1525;
+      --text:     #b8cce0;
+      --text-dim: #5a7a96;
+      --red-warn: #ff3b3b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Chakra Petch', monospace;
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    /* ── RAIN CANVAS ── */
+    #rain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.35;
+    }
+
+    /* ── SCANLINES OVERLAY ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 0 4rem;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('assets/silas.jpg');
+      background-size: cover;
+      background-position: center 20%;
+      filter: brightness(0.35) saturate(1.2);
+      z-index: 0;
+      transform: scale(1.04);
+      animation: heroZoom 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroZoom {
+      from { transform: scale(1.04); }
+      to   { transform: scale(1.10); }
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: 
+        linear-gradient(to top, var(--bg) 0%, rgba(4,8,16,0.6) 40%, transparent 70%),
+        linear-gradient(to right, rgba(4,8,16,0.8) 0%, transparent 60%);
+      z-index: 1;
+    }
+
+    /* Energy bleed lines from bottom */
+    .hero-energy {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(to right, transparent, var(--energy), transparent);
+      box-shadow: var(--energy-glow);
+      z-index: 2;
+      animation: energyPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes energyPulse {
+      0%, 100% { opacity: 0.6; }
+      50%       { opacity: 1; }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      padding: 0 6vw;
+      max-width: 900px;
+    }
+
+    .classification-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      color: var(--energy);
+      border: 1px solid var(--energy);
+      padding: 0.25rem 0.75rem;
+      margin-bottom: 1.5rem;
+      animation: badgeBlink 4s step-end infinite;
+    }
+
+    .classification-badge::before {
+      content: '▶';
+      font-size: 0.5rem;
+    }
+
+    @keyframes badgeBlink {
+      0%, 90%, 100% { opacity: 1; }
+      95% { opacity: 0; }
+    }
+
+    .hero-alias {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(4rem, 12vw, 9rem);
+      font-weight: 900;
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      color: #fff;
+      text-shadow: 
+        0 0 40px rgba(255,145,0,0.5),
+        0 0 100px rgba(255,145,0,0.2);
+      animation: titleReveal 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes titleReveal {
+      from { opacity: 0; transform: translateY(30px) skewX(-3deg); }
+      to   { opacity: 1; transform: translateY(0) skewX(0); }
+    }
+
+    .hero-name {
+      font-family: 'Chakra Petch', monospace;
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      font-weight: 300;
+      letter-spacing: 0.4em;
+      color: var(--text-dim);
+      margin-top: 0.75rem;
+      animation: titleReveal 1s 0.15s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .hero-name span {
+      color: var(--neon-blue);
+    }
+
+    /* ── SECTION WRAPPER ── */
+    .section {
+      position: relative;
+      z-index: 1;
+      padding: 5rem 6vw;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      color: var(--energy);
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--energy-lo), transparent);
+      max-width: 200px;
+    }
+
+    /* ── DOSSIER GRID ── */
+    .dossier {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 768px) {
+      .dossier { grid-template-columns: 1fr; }
+    }
+
+    /* ── SUBJECT CARD ── */
+    .subject-card {
+      position: relative;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    .subject-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      filter: saturate(0.85) contrast(1.1);
+      transition: filter 0.6s ease, transform 0.6s ease;
+    }
+
+    .subject-card:hover img {
+      filter: saturate(1.1) contrast(1.15);
+      transform: scale(1.03);
+    }
+
+    /* energy border frame */
+    .subject-card::before,
+    .subject-card::after {
+      content: '';
+      position: absolute;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .subject-card::before {
+      inset: 0;
+      border: 1px solid rgba(255,145,0,0.25);
+    }
+    .subject-card::after {
+      top: 0; left: 0;
+      width: 40%; height: 3px;
+      background: var(--energy);
+      box-shadow: var(--energy-glow);
+    }
+
+    .subject-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 2rem 1.5rem 1.5rem;
+      background: linear-gradient(to top, rgba(4,8,16,0.95) 0%, transparent 100%);
+      z-index: 3;
+    }
+
+    .subject-id {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--text-dim);
+    }
+
+    .subject-status {
+      display: inline-block;
+      margin-top: 0.4rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--energy);
+      border-left: 2px solid var(--energy);
+      padding-left: 0.5rem;
+    }
+
+    /* ── INFO PANEL ── */
+    .info-panel {
+      background: var(--surface);
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      border-left: 1px solid rgba(255,145,0,0.1);
+    }
+
+    /* ── ORIGIN BLOCK ── */
+    .block-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--neon-blue);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .block-label::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--neon-blue);
+      box-shadow: 0 0 8px var(--neon-blue);
+    }
+
+    .origin-text {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: var(--text);
+      font-style: italic;
+      font-weight: 300;
+      border-left: 2px solid var(--neon-blue-lo);
+      padding-left: 1rem;
+    }
+
+    /* ── ABILITIES ── */
+    .abilities-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .ability-card {
+      background: var(--surface2);
+      border: 1px solid var(--energy-lo);
+      padding: 1rem 1.2rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .ability-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: var(--energy);
+      box-shadow: var(--energy-glow);
+    }
+
+    .ability-card:hover {
+      border-color: rgba(255,145,0,0.5);
+      box-shadow: inset 0 0 30px rgba(255,145,0,0.04);
+    }
+
+    .ability-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--energy);
+      margin-bottom: 0.4rem;
+    }
+
+    .ability-desc {
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: var(--text-dim);
+      font-weight: 300;
+    }
+
+    /* ── WEAKNESS ── */
+    .weakness-card {
+      background: rgba(255, 59, 59, 0.04);
+      border: 1px solid rgba(255,59,59,0.2);
+      padding: 1rem 1.2rem;
+      position: relative;
+    }
+
+    .weakness-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: var(--red-warn);
+      box-shadow: 0 0 8px var(--red-warn);
+    }
+
+    .weakness-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--red-warn);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .weakness-label::before {
+      content: '⚠';
+    }
+
+    .weakness-text {
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: rgba(255,59,59,0.7);
+      font-weight: 300;
+    }
+
+    /* ── GALLERY ── */
+    .gallery-section {
+      border-top: 1px solid rgba(255,145,0,0.1);
+      padding-top: 4rem;
+    }
+
+    .gallery-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .gallery-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #fff;
+    }
+
+    .gallery-count {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2px;
+    }
+
+    .gallery-item {
+      position: relative;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      background: var(--surface);
+      cursor: pointer;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(0.8) brightness(0.9);
+      transition: filter 0.5s ease, transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .gallery-item:hover img {
+      filter: saturate(1.1) brightness(1.05);
+      transform: scale(1.06);
+    }
+
+    .gallery-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 1px solid transparent;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      pointer-events: none;
+    }
+
+    .gallery-item:hover::after {
+      border-color: rgba(255,145,0,0.4);
+      box-shadow: inset 0 0 30px rgba(255,145,0,0.08);
+    }
+
+    /* corner accents on hover */
+    .gallery-item::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 0; height: 2px;
+      background: var(--energy);
+      box-shadow: var(--energy-glow);
+      transition: width 0.4s ease;
+      z-index: 2;
+    }
+
+    .gallery-item:hover::before {
+      width: 40%;
+    }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(4,8,16,0.97);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      cursor: crosshair;
+    }
+
+    .lightbox.open {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border: 1px solid rgba(255,145,0,0.3);
+      box-shadow: 0 0 60px rgba(255,145,0,0.15);
+      animation: lightboxIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes lightboxIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
+      cursor: crosshair;
+      transition: color 0.2s;
+    }
+
+    .lightbox-close:hover {
+      color: var(--energy);
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      position: relative;
+      z-index: 1;
+      padding: 2rem 6vw;
+      border-top: 1px solid rgba(255,145,0,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-text {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      color: var(--text-dim);
+    }
+
+    .footer-energy {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--energy));
+      box-shadow: var(--energy-glow);
+    }
+
+    /* ── LOADING STATE ── */
+    .gallery-loading {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: var(--text-dim);
+    }
+
+    .gallery-loading::after {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--energy);
+      border-radius: 50%;
+      margin-left: 0.5rem;
+      animation: loadPulse 1s ease-in-out infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes loadPulse {
+      0%, 100% { opacity: 0.2; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Rain canvas -->
+  <canvas id="rain"></canvas>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-energy"></div>
+
+    <div class="hero-content">
+      <div class="classification-badge">CLASSIFIED // THREAT LEVEL: APEX</div>
+      <h1 class="hero-alias">APEX</h1>
+      <p class="hero-name">SILAS VANCE &nbsp;//&nbsp; <span>SUBJECT 001</span> &nbsp;//&nbsp; ACTIVE</p>
+    </div>
+  </section>
+
+  <!-- ── DOSSIER ── -->
+  <div class="section">
+    <p class="section-label">SUBJECT DOSSIER</p>
+
+    <div class="dossier">
+
+      <!-- Image panel -->
+      <div class="subject-card">
+        <img src="assets/silas-02.jpg" alt="Apex — Silas Vance" />
+        <div class="subject-overlay">
+          <div class="subject-id">ID // SV-001-KDA &nbsp;&nbsp; RECORDED: CLASSIFIED</div>
+          <div class="subject-status">KINETIC ADAPTATION ACTIVE</div>
+        </div>
+      </div>
+
+      <!-- Info panel -->
+      <div class="info-panel">
+
+        <div>
+          <div class="block-label">INCIDENT ORIGIN</div>
+          <p class="origin-text">
+            A catastrophic failure in a resonance chamber fused experimental
+            kinetic-dampening metamaterials into his cellular structure, triggering
+            hyper-accelerated cellular evolution.
+          </p>
+        </div>
+
+        <div>
+          <div class="block-label">REGISTERED CAPABILITIES</div>
+          <div class="abilities-list">
+
+            <div class="ability-card">
+              <div class="ability-name">▸ Kinetic Absorption</div>
+              <div class="ability-desc">
+                Absorbs kinetic energy from physical impacts, ballistics, and explosions.
+                Stored energy is redirected as targeted concussive shockwaves.
+              </div>
+            </div>
+
+            <div class="ability-card">
+              <div class="ability-name">▸ Biological Adaptation</div>
+              <div class="ability-desc">
+                Cells autonomously rewrite DNA in real-time to counter environmental threats.
+                Grants instantaneous temporary mutations — thermal resistance, toxin immunity,
+                rapid tissue regeneration.
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div>
+          <div class="weakness-card">
+            <div class="weakness-label">CRITICAL VULNERABILITY</div>
+            <div class="weakness-text">
+              Cellular structure becomes highly unstable if completely deprived of kinetic
+              input or isolated in sensory-deprivation environments.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── GALLERY ── -->
+    <div class="gallery-section" style="margin-top: 5rem;">
+      <div class="gallery-header">
+        <div class="gallery-title">FIELD FOOTAGE</div>
+        <div class="gallery-count" id="gallery-count">LOADING ASSETS</div>
+      </div>
+      <div class="gallery-grid" id="gallery-grid">
+        <div class="gallery-loading">RETRIEVING ENCRYPTED FILES</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── FOOTER ── */
+  <footer class="footer">
+    <div class="footer-text">APEX DOSSIER // EYES ONLY // UNAUTHORIZED ACCESS IS A FEDERAL OFFENSE</div>
+    <div class="footer-energy"></div>
+  </footer>
+
+  <!-- ── LIGHTBOX ── -->
+  <div class="lightbox" id="lightbox">
+    <span class="lightbox-close" id="lightbox-close">[ CLOSE ]</span>
+    <img id="lightbox-img" src="" alt="" />
+  </div>
+
+  <script>
+    /* ── RAIN ── */
+    (function() {
+      const canvas = document.getElementById('rain');
+      const ctx = canvas.getContext('2d');
+
+      let drops = [];
+      const COUNT = 180;
+
+      function resize() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      function init() {
+        drops = [];
+        for (let i = 0; i < COUNT; i++) {
+          drops.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            len: Math.random() * 18 + 8,
+            speed: Math.random() * 6 + 8,
+            opacity: Math.random() * 0.5 + 0.1,
+            width: Math.random() * 0.8 + 0.2
+          });
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drops.forEach(d => {
+          ctx.beginPath();
+          ctx.moveTo(d.x, d.y);
+          ctx.lineTo(d.x - d.len * 0.15, d.y + d.len);
+          ctx.strokeStyle = `rgba(140,190,230,${d.opacity})`;
+          ctx.lineWidth = d.width;
+          ctx.stroke();
+
+          d.y += d.speed;
+          d.x -= d.speed * 0.15;
+
+          if (d.y > canvas.height) {
+            d.y = -d.len;
+            d.x = Math.random() * canvas.width;
+          }
+        });
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('resize', () => { resize(); init(); });
+      resize(); init(); draw();
+    })();
+
+    /* ── GALLERY ── */
+    (async function() {
+      const grid  = document.getElementById('gallery-grid');
+      const count = document.getElementById('gallery-count');
+
+      let images = [];
+
+      try {
+        const res = await fetch('assets/gallery.json');
+        if (!res.ok) throw new Error('not found');
+        const data = await res.json();
+        images = data.images || [];
+      } catch (_) {
+        // fallback: known filenames if manifest missing
+        images = ['silas.jpg', 'silas-02.jpg'];
+      }
+
+      count.textContent = `${images.length} ASSET${images.length !== 1 ? 'S' : ''} RETRIEVED`;
+      grid.innerHTML = '';
+
+      images.forEach((filename, i) => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+
+        const img = document.createElement('img');
+        img.src  = `assets/${filename}`;
+        img.alt  = `Apex — Field Image ${i + 1}`;
+        img.loading = 'lazy';
+
+        item.appendChild(img);
+        grid.appendChild(item);
+
+        item.addEventListener('click', () => openLightbox(`assets/${filename}`));
+      });
+    })();
+
+    /* ── LIGHTBOX ── */
+    const lightbox     = document.getElementById('lightbox');
+    const lightboxImg  = document.getElementById('lightbox-img');
+    const lightboxClose = document.getElementById('lightbox-close');
+
+    function openLightbox(src) {
+      lightboxImg.src = src;
+      lightbox.classList.add('open');
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      lightboxImg.src = '';
+    }
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+  </script>
+
+</body>
+</html>
