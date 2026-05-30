@@ -1,0 +1,41 @@
+name: Update Gallery Manifest
+
+on:
+  push:
+    paths:
+      - 'assets/**'
+    branches:
+      - main
+
+jobs:
+  update-manifest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Generate gallery.json
+        run: |
+          cd assets
+          echo '{"images":[' > gallery.json
+          first=true
+          for f in $(ls *.jpg *.jpeg *.png *.webp 2>/dev/null | sort); do
+            if [ "$first" = true ]; then
+              first=false
+            else
+              echo ',' >> gallery.json
+            fi
+            echo -n "\"$f\"" >> gallery.json
+          done
+          echo ']}' >> gallery.json
+
+      - name: Commit manifest if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/gallery.json
+          git diff --staged --quiet || git commit -m "chore: update gallery manifest [skip ci]"
+          git push
